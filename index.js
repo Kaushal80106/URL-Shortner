@@ -35,17 +35,25 @@ app.use('/',checkAuth ,staticRoute)
 app.use('/url',restrictToLoggedinUserOnly,urlRoute)
 
 app.use('/user',userRoute)
-app.get('/:shortId',async (req,res)=>{
-   const shortId = req.params.shortId ;
- const entry =   await URL.findOneAndUpdate({shortId},{
-    $push :{
-       visitHistory:{ timestamp : Date.now()},
-    },
-   });
-  
-   res.redirect(entry.redirectURL)
+app.get('/:shortId', async (req, res) => {
+    const shortId = req.params.shortId;
+    
+    // Find the entry in the database
+    const entry = await URL.findOneAndUpdate(
+        { shortId },
+        { $push: { visitHistory: { timestamp: Date.now() } } },
+        { new: true }  // Return the updated document
+    );
 
-}) 
+    // Check if entry exists before trying to access redirectURL
+    if (!entry || !entry.redirectURL) {
+        return res.status(404).send('URL not found');
+    }
+
+    // Redirect to the URL stored in redirectURL field
+    res.redirect(entry.redirectURL);
+});
+
 
 
 
