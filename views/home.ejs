@@ -28,11 +28,15 @@
       <button type="submit">Generate</button>
     </form>
 
-    <% if (locals.id) { %>
-      <p class="subtitle" style="margin-top:16px;">
-        Short URL: http://localhost:8001/<%= id %>
-      </p>
-    <% } %>
+    <% if (locals.shortUrl) { %>
+  <p class="subtitle" style="margin-top:16px;">
+    Short URL:
+    <a href="<%= shortUrl %>" target="_blank">
+      <%= shortUrl %>
+    </a>
+  </p>
+<% } %>
+
   </div>
 
   <% if (locals.urls) { %>
