@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const secretKey = "!@#$%QWERTasdfg"
+const secretKey = process.env.JWT_SECRET
 function setUser(user) {
    return jwt.sign({
     _id : user._id ,

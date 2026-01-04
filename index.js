@@ -1,8 +1,11 @@
+require("dotenv").config();
+
 const express = require('express') 
 const path = require('path')
 const cookieParser  =  require('cookie-parser')
 const { ConnectWithDb } = require('./connect')
 const URL = require('./models/url')
+const PORT = process.env.PORT || 8001;
 
 
 
@@ -12,9 +15,9 @@ const userRoute = require('./routes/user')
 const { checkForAuthentication , restrictTo } = require('./middlewares/auth')
 
 const app = express() 
-const PORT = 8001
 
-ConnectWithDb("mongodb://127.0.0.1:27017/short-url")
+
+ConnectWithDb(process.env.MONGO_URL)
 .then(()=>{
     console.log("Connected with DB Successfully")
 })
@@ -38,23 +41,54 @@ app.use('/',staticRoute)
 app.use('/url',restrictTo(["NORMAL","ADMIN"]),urlRoute)
 
 app.use('/user',userRoute)
+
+// Preview page for a short URL — useful for frontend display and sharing
 app.get('/:shortId', async (req, res) => {
     const shortId = req.params.shortId;
-    
-    // Find the entry in the database
+    const entry = await URL.findOne({ shortId });
+
+    if (!entry) {
+        return res.status(404).send('URL not found');
+    }
+
+    return res.render('preview', {
+        url: entry,
+        host: req.get('host'),
+        user: req.user
+    });
+});
+
+// Redirect route — trigger visit tracking then redirect to original URL
+app.get('/r/:shortId', async (req, res) => {
+    const shortId = req.params.shortId;
+
     const entry = await URL.findOneAndUpdate(
         { shortId },
         { $push: { visitHistory: { timestamp: Date.now() } } },
-        { new: true }  // Return the updated document
+        { new: true }
     );
 
-    // Check if entry exists before trying to access redirectURL
     if (!entry || !entry.redirectURL) {
         return res.status(404).send('URL not found');
     }
 
-    // Redirect to the URL stored in redirectURL field
     res.redirect(entry.redirectURL);
+});
+
+// API endpoint (admin-only) for metadata/analytics
+app.get('/api/:shortId', restrictTo(['ADMIN']), async (req, res) => {
+    const shortId = req.params.shortId;
+    const entry = await URL.findOne({ shortId });
+
+    if (!entry) return res.status(404).json({ error: 'URL not found' });
+
+    return res.json({
+        shortId: entry.shortId,
+        redirectURL: entry.redirectURL,
+        totalClicks: entry.visitHistory ? entry.visitHistory.length : 0,
+        createdBy: entry.createdBy,
+        createdAt: entry.createdAt
+    });
 });
 
 

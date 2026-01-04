@@ -1,95 +1,112 @@
-# URL-Shortner
+# URL-Shortner 🚀
 
-> Simple URL shortening service built with Node.js, Express and MongoDB.
+> Lightweight URL shortening service built with Node.js, Express, EJS and MongoDB.
 
 ## Overview
 
-This project lets users sign up and log in, create short URLs that redirect to full URLs, and view analytics (visit timestamps) for each short link.
-
-Tech: Node.js, Express, EJS, MongoDB (Mongoose), JSON Web Tokens (JWT for cookie-based auth)
-
-## Quick Start
-# URL Shortner
-
-Lightweight URL shortening service built with Node.js, Express, EJS and MongoDB.
-
-This app lets users sign up / log in, create short links that redirect to long URLs, and view simple visit analytics.
+Users can sign up, log in, create short links, preview short links, and track simple visit analytics (timestamps). Admins can view aggregated totals across all users.
 
 Tech stack
 - Node.js + Express
 - EJS for server-rendered views
 - MongoDB with Mongoose
+- JWT for cookie-based auth
 
-Features
-- User signup and login
-- Create short URLs and redirect via `/:shortId`
-- Track visit timestamps (analytics) per short URL
+---
+
+## Quick start
 
 Prerequisites
 - Node.js 14+ installed
 - MongoDB available (local or remote URI)
 
-Quick start
-
-1. Install dependencies
+1) Install dependencies
 
 ```bash
 npm install
 ```
 
-2. Create an environment file `.env` at the project root (example below)
+2) Create a `.env` file in the project root with these variables:
 
-3. Start the server
+```env
+MONGO_URL=mongodb://127.0.0.1:27017/short-url
+PORT=8001
+# (Optional) Replace the default JWT secret in the code or modify service/auth to read from env
+# JWT_SECRET=replace_with_secure_secret
+```
+
+3) Start the server
 
 ```bash
 npm start
 ```
 
-By default the app listens on port `8001` unless overridden by `PORT`.
+By default the app listens on `http://localhost:8001` unless `PORT` is set.
 
-Environment variables
-- `MONGO_URI` — MongoDB connection string (e.g. `mongodb://127.0.0.1:27017/short-url`)
-- `PORT` — Port to run the server (default: `8001`)
-- `JWT_SECRET` — Secret key used to sign auth tokens (required for production)
+---
 
-Recommended `.env` example
+## Important notes about current implementation ⚠️
+- The application stores the JWT signing secret in code by default — **update the auth service to use an environment variable (JWT_SECRET)** for production. 
+- Passwords are stored as plain text currently. Please **add password hashing (bcrypt)** before deploying to production. 
+- The auth cookie used by the app is named `token` (not `uid`).
 
-```
-MONGO_URI=mongodb://127.0.0.1:27017/short-url
-PORT=8001
-JWT_SECRET=replace_with_secure_secret
-```
+---
 
-Project structure (important files)
-- Controllers: [controllers/url.js](controllers/url.js), [controllers/user.js](controllers/user.js)
-- Routes: [routes/url.js](routes/url.js), [routes/user.js](routes/user.js), [routes/staticRouter.js](routes/staticRouter.js)
-- Models: [models/url.js](models/url.js), [models/user.js](models/user.js)
-- Middleware: [middlewares/auth.js](middlewares/auth.js)
-- Auth service: [service/auth.js](service/auth.js)
-- Views: `views/home.ejs`, `views/login.ejs`, `views/signup.ejs`
-
-Key routes
-- GET `/` — Home page
+## Key routes & behavior 🔧
+- GET `/` — Home page (shows your URLs; admin sees all URLs and a **Total Clicks (all users)** value)
 - GET `/signup` — Signup page
 - GET `/login` — Login page
-- POST `/user` — Create a new user (body: `name`, `email`, `password`)
-- POST `/user/login` — Login (body: `email`, `password`) — sets `uid` cookie on success
+- GET `/logout` — Sign out (clears auth cookie)
+- POST `/user` — Create user (body: `name`, `email`, `password`)
+- POST `/user/login` — Login (body: `email`, `password`) — sets `token` cookie on success
+
+URL management
 - POST `/url` — Create a short URL (requires auth; body: `url`)
-- GET `/url/analytics/:shortId` — Get analytics for a shortId (requires auth)
-- GET `/:shortId` — Public redirect endpoint
+- GET `/` (Home) — Lists URLs belonging to the logged-in user (admins see all)
+- In the home list each row has **Preview**, **Open (track)** and (admin-only) **API** links
 
-Security notes
-- Use a strong `JWT_SECRET` in production and do not check secrets into source control.
-- Hash passwords (bcrypt) before storing them — consider adding this if not already present.
+Short URL handling
+- GET `/:shortId` — **Preview page** (human-friendly page showing original URL and total clicks)
+- GET `/r/:shortId` — **Redirect endpoint** (records a visit and redirects to the original URL)
+- GET `/api/:shortId` — **Admin-only JSON** endpoint with metadata and total clicks
+- GET `/url/analytics/:shortId` — Returns visit timestamps for the shortId (used by analytics)
 
-Development notes
-- To change the DB, set `MONGO_URI` in `.env` or modify `index.js` connection.
-- The app uses a cookie named `uid` to store JWT tokens for authenticated routes.
+---
 
-Contributing
-- Open an issue or submit a PR with improvements.
+## How to test (quick) ✅
+1. Run the server with `npm start`.
+2. Sign up a user and log in.
+3. Create a short URL using the home form.
+4. Open `http://localhost:8001/<shortId>` to see the Preview page.
+5. Click **Continue to Destination** (or open `/r/<shortId>`) — this should redirect and increment the click count.
+6. Admins can visit `/` to see **Total Clicks (all users)** and the **API** link for each short URL.
 
-License
-- MIT
+---
 
-If you want, I can add a Postman collection, Dockerfile, or CI scripts next.
+## Deployment checklist ✅
+- Replace hardcoded secrets with environment variables (JWT secret) and keep `.env` out of source control.
+- Add password hashing (bcrypt) and input validation.
+- Configure MongoDB (replica set / managed DB) for production resiliency.
+- Consider adding rate-limiting and CORS rules to the API endpoints.
+- Add secure session/cookie flags (Secure, HttpOnly) in production.
+
+---
+
+## Project structure (important files)
+- Controllers: `controllers/url.js`, `controllers/user.js`
+- Routes: `routes/url.js`, `routes/user.js`, `routes/staticRouter.js`
+- Models: `models/url.js`, `models/user.js`
+- Middleware: `middlewares/auth.js`
+- Auth service: `service/auth.js`
+- Views: `views/home.ejs`, `views/preview.ejs`, `views/login.ejs`, `views/signup.ejs`
+
+---
+
+## Contributing
+Suggestions, bug reports or PRs are welcome. I can also add a Postman collection, Dockerfile, or CI scripts on request.
+
+---
+
+## License
+MIT
+

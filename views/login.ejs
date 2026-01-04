@@ -7,6 +7,12 @@
 </head>
 <body>
 
+<% if (user) { %>
+  <div class="logout-container">
+  <a href="/logout" class="logout-btn">Logout</a>
+</div>
+<% } %>
+
 <div class="auth-page">
   <div class="card">
     <h1>Welcome Back</h1>

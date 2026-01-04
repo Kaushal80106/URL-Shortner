@@ -11,7 +11,8 @@ router.get('/admin/urls',restrictTo(["ADMIN"]),async (req,res,)=>{
 
      return res.render("home",{
         urls : Allurls,
-        totalClicks
+        totalClicks,
+        user: req.user
      })
 })
 
@@ -30,19 +31,26 @@ router.get('/',restrictTo(["NORMAL","ADMIN"]),async (req,res)=>{
    
      return res.render("home",{
         urls : Allurls,
-        totalClicks
+        totalClicks,
+        user: req.user
      })
 })
 
 
 router.get('/signup',(req,res)=>{
-   return res.render("signup")
+   return res.render("signup",{ user: req.user })
 })
 
 
 router.get('/login',(req,res)=>{
-   return res.render("login")
+   return res.render("login",{ user: req.user })
 })
+
+// Sign out route - clears auth cookie and redirects to login
+router.get('/logout', (req, res) => {
+   res.clearCookie('token');
+   return res.redirect('/login');
+});
 
 
 

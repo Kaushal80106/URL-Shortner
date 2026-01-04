@@ -10,7 +10,7 @@ async function handleUserSignup(req ,res) {
         password,
      });
 
-     return res.render("home")
+     return res.render("home",{ user: req.user })
 }
 
 

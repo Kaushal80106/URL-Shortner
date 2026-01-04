@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Short URL Preview</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .preview-card { max-width: 700px; margin: 40px auto; padding: 20px; }
+    .muted { color: #666; font-size: 0.9em; }
+    .actions { margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <div class="home-container preview-card">
+    <h1>🔍 Short URL Preview</h1>
+
+    <p class="muted">Short ID: <strong><%= url.shortId %></strong></p>
+
+    <p>Original URL: <a href="<%= url.redirectURL %>" target="_blank" rel="noopener noreferrer"><%= url.redirectURL %></a></p>
+
+    <p>Total Clicks: <%= url.visitHistory ? url.visitHistory.length : 0 %></p>
+
+    <div class="actions">
+      <a href="/r/<%= url.shortId %>"><button>Continue to Destination (track click)</button></a>
+      <a href="/" class="btn btn-ghost" style="margin-left:12px;">Back to Home</a>
+      <% if (user) { %>
+        &nbsp;<a href="/logout" class="btn btn-ghost" style="margin-left:12px;">Sign out</a>
+      <% } %>
+    </div>
+
+  </div>
+</body>
+</html>

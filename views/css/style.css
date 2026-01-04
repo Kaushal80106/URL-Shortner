@@ -159,3 +159,51 @@ tbody tr {
 tbody tr:hover {
   background: #f8fafc;
 }
+
+/* ================= BUTTON VARIANTS ================= */
+.btn {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.btn-ghost:hover {
+  background: #f1f5f9;
+  border-color: var(--primary);
+  color: var(--primary-dark);
+}
+
+.logout-container {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 20px;
+}
+
+.logout-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  background-color: #2563eb;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  width: auto;
+}
+
+.logout-btn:hover {
+  background-color: #1d4ed8;
+}
+
