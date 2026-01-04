@@ -1,52 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        body  {
-           font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>URL Shortener</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-   <h1>URL Shortner</h1>
-   <% if (locals.id) { %>
-        <p>URL Generated : http://localhost:8001/<%= id %></p>
-   <% } %>
-  <div>
-   <form action="/url" method="post">
-     <label for="">Enter your Original Url : </label>
-    <input type="text" name="url" id="" placeholder="https://www.google.com">
-    <button type="submit">Generate</button>
-   </form>
-  
-  </div>
-  <div>
-    <% if (locals.urls) { %>
-     <table>
-        <thead>
-            <th>Sr. No</th>
-            <th>ShortID</th>
-            <th>Redirect</th>
-            <th>Clicks</th>
-        </thead>
-        <tbody>
-            <% urls.forEach((url , index )=> { %>
-                <tr>
-             <td><%= index + 1  %></td>
-             <td><%= url.shortId%></td>
-             <td><%= url.redirectURL %></td>
-             <td><%= url.visitHistory.length %></td>
-             </tr>
-            <% }) %>
-        </tbody>
-     </table>
+
+<div class="home-container">
+  <h1>🔗 URL Shortener</h1>
+
+  <% if (typeof totalClicks !== 'undefined') { %>
+    <p class="subtitle">Total Clicks (all users): <%= totalClicks %></p>
+  <% } %>
+
+  <div class="card" style="max-width: 600px;">
+    <form action="/url" method="post">
+      <div class="form-group">
+        <label>Enter Original URL</label>
+        <input type="text" name="url" placeholder="https://www.google.com" required>
+      </div>
+      <button type="submit">Generate</button>
+    </form>
+
+    <% if (locals.id) { %>
+      <p class="subtitle" style="margin-top:16px;">
+        Short URL: http://localhost:8001/<%= id %>
+      </p>
     <% } %>
   </div>
 
+  <% if (locals.urls) { %>
+    <div style="margin-top: 30px;">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Short ID</th>
+            <th>Original URL</th>
+            <th>Clicks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% urls.forEach((url, index) => { %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td><%= url.shortId %></td>
+              <td><%= url.redirectURL %></td>
+              <td><%= url.visitHistory.length %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</div>
 
 </body>
-
 </html>

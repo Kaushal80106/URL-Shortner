@@ -18,9 +18,7 @@ async function handleUserLogin(req ,res) {
      const { email , password } = req.body ;
      const user = await User.findOne({email,password}) ;
      if(!user) {
-        return res.render("login",{
-            error:"invalid email or password"
-        })
+        return res.redirect("/signup")
      }
      const token = setUser(user) ;
      

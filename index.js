@@ -4,6 +4,8 @@ const cookieParser  =  require('cookie-parser')
 const { ConnectWithDb } = require('./connect')
 const URL = require('./models/url')
 
+
+
 const urlRoute = require('./routes/url')
 const staticRoute = require('./routes/staticRouter')
 const userRoute = require('./routes/user')
@@ -22,6 +24,7 @@ ConnectWithDb("mongodb://127.0.0.1:27017/short-url")
 
 app.set("view engine"  , "ejs") 
 app.set("views",path.resolve("./views")) ;
+app.use("/css", express.static("views/css"));
 
 
 app.use(express.json())
