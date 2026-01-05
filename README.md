@@ -6,6 +6,12 @@
 
 Users can sign up, log in, create short links, preview short links, and track simple visit analytics (timestamps). Admins can view aggregated totals across all users.
 
+**Live demo:** https://url-shortner-ai0u.onrender.com
+
+**Project status:** Proof-of-concept / MVP — not production-ready. See the **Important notes** and **Deployment checklist** below before deploying.
+
+**Maintainer:** Kaush (open to contributions — please open an issue or submit a PR)
+
 Tech stack
 - Node.js + Express
 - EJS for server-rendered views
@@ -31,9 +37,15 @@ npm install
 ```env
 MONGO_URL=mongodb://127.0.0.1:27017/short-url
 PORT=8001
-# (Optional) Replace the default JWT secret in the code or modify service/auth to read from env
-# JWT_SECRET=replace_with_secure_secret
+JWT_SECRET=replace_with_secure_secret
+NODE_ENV=development
 ```
+
+Environment variables (required / recommended)
+- `MONGO_URL` — MongoDB connection string used by Mongoose.
+- `PORT` — port the app listens on (default: `8001`).
+- `JWT_SECRET` — secret key used to sign authentication tokens; **set this in production and never commit it**.
+- `NODE_ENV` — set to `production` in production deployments.
 
 3) Start the server
 
@@ -103,7 +115,20 @@ Short URL handling
 ---
 
 ## Contributing
-Suggestions, bug reports or PRs are welcome. I can also add a Postman collection, Dockerfile, or CI scripts on request.
+Suggestions, bug reports or PRs are welcome — thank you! To contribute:
+
+- Open an issue to discuss larger changes or feature requests.
+- Fork the repository, add/fix tests where applicable, and submit a pull request describing your changes.
+
+I can also add a Postman collection, Dockerfile, or CI scripts on request.
+
+**Live demo:** https://url-shortner-ai0u.onrender.com
+
+**Contact & Support**
+- For quick help, open an issue in this repository.
+- For feature or security-sensitive reports, please open an issue and mark it clearly.
+
+**Version**: 1.0.0
 
 ---
 
